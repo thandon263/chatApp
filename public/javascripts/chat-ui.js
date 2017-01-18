@@ -30,6 +30,7 @@ let processingUserInput = (chatApp, socket) => {
 // Client side application initialization logic
 let socket = io.connect();
 
+// Displaying results of a name change attempt
 $(function() {
   let chatApp = new Chat(socket);
 
@@ -45,17 +46,17 @@ $(function() {
     $('#messages').append(divSystemContentElement(message));
 
   });
-
+// Displaying results of a room change
   socket.on('joinResult', (result) => {
     $('#room').text(result.room);
     $('#messages').append(divSystemContentElement('Room Changed.'));
   });
-
+// Displaying received messages
   socket.on('message', (message) => {
     let newElement = $('<div></div>').text(message.text);
     $('#messages').append(newElement);
   });
-
+// display list of rooms available
   socket.on('rooms', (rooms) => {
     $('#room-list').empty();
 
@@ -65,19 +66,19 @@ $(function() {
         $('#room-list').append(divEscapeContentElement(room));
       }
     }
-
+// Allow click of a room name to change that room
     $('#room-list div').click(() => {
       chatApp.processCommand('/join ' + $(this).text());
       $('#send-message').focus();
     });
   });
-
+// Request list of rooms available intermittently
   setInterval(() => {
     socket.emit('rooms');
   }, 1000);
 
   $('#send-message').focus();
-
+// Allow submitting the form to send a chat message.
   $('#send-form').submit(() => {
       processingUserInput(chatApp, socket);
       return false;
