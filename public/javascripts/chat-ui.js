@@ -26,3 +26,61 @@ let processingUserInput = (chatApp, socket) => {
     $('#send-message').val('');
 
 }
+
+// Client side application initialization logic
+let socket = io.connect();
+
+$(function() {
+  let chatApp = new Chat(socket);
+
+  socket.on('nameResult', (result) => {
+    let message;
+
+    if (result.success) {
+      message = 'You are now known ass ' + result.name + '.';
+    } else {
+      message = result.message;
+    }
+
+    $('#messages').append(divSystemContentElement(message));
+
+  });
+
+  socket.on('joinResult', (result) => {
+    $('#room').text(result.room);
+    $('#messages').append(divSystemContentElement('Room Changed.'));
+  });
+
+  socket.on('message', (message) => {
+    let newElement = $('<div></div>').text(message.text);
+    $('#messages').append(newElement);
+  });
+
+  socket.on('rooms', (rooms) => {
+    $('#room-list').empty();
+
+    for (let room in rooms) {
+      room = room.substring(1, room.length);
+      if (room != '') {
+        $('#room-list').append(divEscapeContentElement(room));
+      }
+    }
+
+    $('#room-list div').click(() => {
+      chatApp.processCommand('/join ' + $(this).text());
+      $('#send-message').focus();
+    });
+  });
+
+  setInterval(() => {
+    socket.emit('rooms');
+  }, 1000);
+
+  $('#send-message').focus();
+
+  $('#send-form').submit(() => {
+      processingUserInput(chatApp, socket);
+      return false;
+  });
+
+}); // End of the initialization function
