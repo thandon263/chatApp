@@ -1,0 +1,16 @@
+{
+  "name": "multiRoomChatApp",
+  "version": "0.0.1",
+  "description": "This is a multi-room chat application built using Node and Socket.IO",
+  "dependencies": {
+	"socket.io": "~0.9.6",
+	"mime": "~1.2.7"
+  },
+  "main": "index.js",
+  "repository": {
+    "url": "git@github.com:thandon263/chatApp.git",
+    "type": "git"
+  },
+  "author": "Thando Ncube",
+  "license": "MIT"
+}
